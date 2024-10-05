@@ -15,8 +15,13 @@ app.use(cors()); // Enable CORS for allowed origins
 
 // Allow requests from specific origins
 const allowedOrigins = [
+
     'http://localhost:5173',
-    'http://localhost:3000'
+     'https://krushi-bajar.netlify.app',
+     'https://krushi-bajar.netlify.app/',
+     'http://localhost:5174',
+    'http://localhost:3000',
+    'https://krushi-bajar-deployment.onrender.com',
 ];
 
 app.use(cors({
@@ -582,9 +587,9 @@ app.use('/images', express.static(path.join(__dirname, 'upload/images'))); // wh
 app.post("/upload",upload.single('product'),(req,res)=>{    //we creted "/upload to upload any images to the end point "
     res.json({
         success:1,
-        image_url:`http://localhost:3000/images/${req.file.filename}` // usiing image url we can accces to thr image 
+        image_url:`https://krushi-bajar-deployment.onrender.com/images/${req.file.filename}` // usiing image url we can accces to thr image 
       
-        // image_url:`https://krushibajarbackend.onrender.com/images/${req.file.filename}`
+        // image_url:`https://krushi-bajar-deployment.onrender.com/images/${req.file.filename}`
     })
 })
 
@@ -618,7 +623,7 @@ app.post('/upload-screenshot', uploadScreenshot.single('screenshot'), (req, res)
 
   res.json({
       success: 1,
-      screenshot_url: `http://localhost:3000/screenshots/${req.file.filename}` // URL to access the screenshot
+      screenshot_url: `https://krushi-bajar-deployment.onrender.com/${req.file.filename}` // URL to access the screenshot
   });
 });
 
