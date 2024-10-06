@@ -11,7 +11,6 @@ const { v4: uuidv4 } = require('uuid');
 
 
 app.use(express.json()); // Automatically parse JSON in incoming requests
-app.use(cors()); // Enable CORS for allowed origins
 
 // Allow requests from specific origins
 const allowedOrigins = [
