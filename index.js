@@ -599,7 +599,7 @@ app.post('/upload', upload, (req, res) => {
     }
     res.json({
         success: 1,
-        image_url: `https://your-domain.com/images/${req.file.filename}` // Replace with your actual domain
+        image_url: `https://krushi-bajar-deployment.onrender.com/images/${req.file.filename}` // Replace with your actual domain
     });
 });
 
