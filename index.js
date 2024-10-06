@@ -569,8 +569,14 @@ app.post("/removefromcart", fetchUser, async (req, res) => {
   //Image storage engine:
 
 
+const uploadDir = './upload/images';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Image storage engine
 const storage = multer.diskStorage({
-    destination: './upload/images', // Change this path if necessary
+    destination: uploadDir, // Ensure this path is correct
     filename: (req, file, cb) => {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
@@ -579,7 +585,7 @@ const storage = multer.diskStorage({
 // Initialize upload
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 1000000 }, // Limit file size (1MB)
+    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size (5MB)
     fileFilter: (req, file, cb) => {
         const filetypes = /jpeg|jpg|png|gif/;
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -594,6 +600,12 @@ const upload = multer({
 
 // Image upload endpoint
 app.post('/upload', upload, (req, res) => {
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+    
+    if (req.fileValidationError) {
+        return res.status(400).json({ success: 0, message: req.fileValidationError });
+    }
     if (!req.file) {
         return res.status(400).json({ success: 0, message: 'No file uploaded' });
     }
@@ -602,6 +614,8 @@ app.post('/upload', upload, (req, res) => {
         image_url: `https://krushi-bajar-deployment.onrender.com/images/${req.file.filename}` // Replace with your actual domain
     });
 });
+
+
 
 const screenshotStorage = multer.diskStorage({
   destination: './upload/screenshots',
