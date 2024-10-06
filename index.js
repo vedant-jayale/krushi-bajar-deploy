@@ -569,39 +569,38 @@ app.post("/removefromcart", fetchUser, async (req, res) => {
   //Image storage engine:
 
 
-const storage =multer.diskStorage({
-    destination:'./upload/images',
-    filename:(req,file,cb)=>{
-        return  cb(null,`${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
-
+const storage = multer.diskStorage({
+    destination: './upload/images', // Change this path if necessary
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
-})
+});
 
+// Initialize upload
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 }, // Limit file size (1MB)
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png|gif/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb('Error: Images Only!');
+        }
+    }
+}).single('product');
 
-const upload=multer({storage:storage})
-
-// creating upload endpooints for images:
-app.use('/images', express.static(path.join(__dirname, 'upload/images'))); // whatever images store in upload/images we get it into /images 
-
-app.post("/upload",upload.single('product'),(req,res)=>{    //we creted "/upload to upload any images to the end point "
+// Image upload endpoint
+app.post('/upload', upload, (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: 0, message: 'No file uploaded' });
+    }
     res.json({
-        success:1,
-        image_url:`https://krushi-bajar-deployment.onrender.com/images/${req.file.filename}` // usiing image url we can accces to thr image 
-      
-        // image_url:`https://krushi-bajar-deployment.onrender.com/images/${req.file.filename}`
-    })
-})
-
-
-// Example verification endpoint
-app.get('/verifyimages', async (req, res) => {
-    try {
-        const products = await Product.find({});
-        console.log(products);
-        res.json(products);
-    } catch (error) {
-        res.status(500).send('Error fetching products');
-    }
+        success: 1,
+        image_url: `https://your-domain.com/images/${req.file.filename}` // Replace with your actual domain
+    });
 });
 
 const screenshotStorage = multer.diskStorage({
